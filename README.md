@@ -25,8 +25,9 @@ npm install
 
 # 3. Set up environment variables
 # Copy the env.example file to .env and configure it with your local environment variables
-# **Important**: For security reasons, I cannot share my personal database credentials. Please use your own PostgreSQL instance and configure the credentials in the .env file.
 cp env.example .env
+# **Important**: For security reasons, I cannot share my personal database credentials. Please use your own PostgreSQL instance and configure the credentials in the .env file.
+# Use the provided pgQuery.sql file to create the necessary tables for the application.
 
 # 4. Start the server
 npm start
