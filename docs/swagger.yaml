@@ -1,0 +1,361 @@
+openapi: 3.0.0
+info:
+  title: Ticket Management System API
+  version: 1.0.0
+  description: API documentation for the Ticket Management System
+servers:
+  - url: http://localhost:8001
+    description: Development Server
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      tags: 
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: johndoe@example.com
+                password:
+                  type: string
+                  example: Password123
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User created successfully!"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Validation failed"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+
+  /auth/login:
+    post:
+      summary: User Login
+      tags: 
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: johndoe@example.com
+                password:
+                  type: string
+                  example: Password123
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  message:
+                    type: string
+                    example: "Login successful"
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email or password"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error"
+  /tickets:
+    post:
+      summary: Create a new ticket
+      tags:
+        - Tickets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Concert Night
+                description:
+                  type: string
+                  example: A musical concert by famous artists
+                type:
+                  type: string
+                  enum: [concert, sports, conference]
+                  example: concert
+                venue:
+                  type: string
+                  example: Madison Square Garden
+                status:
+                  type: string
+                  enum: [open, in-progress, closed]
+                  example: open
+                priority:
+                  type: string
+                  enum: [high, medium, low]
+                  example: high
+                dueDate:
+                  type: string
+                  example: 2024-12-31
+                createdBy:
+                  type: string
+                  example: 1
+      responses:
+        '201':
+          description: Ticket created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Ticket created successfully!
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+        '500':
+          description: Internal server error
+  /tickets/{ticketId}/assign:
+    post:
+      summary: Assign a user to a ticket
+      tags:
+        - Tickets
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  example: 2
+      responses:
+        '201':
+          description: User assigned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User assigned successfully!
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+        '500':
+          description: Internal server error
+  /tickets/analytics:
+    get:
+      summary: Get tickets analytics
+      tags:
+        - Tickets
+      parameters:
+        - name: fromdate
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 2024-01-01
+        - name: todate
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 2024-12-31
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [open, in-progress, closed]
+            example: open
+        - name: priority
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [high, medium, low]
+            example: high
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [concert, sports, conference]
+            example: concert
+        - name: venue
+          in: query
+          required: false
+          schema:
+            type: string
+            example: Madison Square Garden
+      responses:
+        '200':
+          description: Analytics data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  analytics:
+                    type: object
+                    example:
+                      totalTickets: 100
+                      closedTickets: 50
+                      openTickets: 30
+                      inProgressTickets: 20
+                      priorityDistribution:
+                        high: 40
+                        medium: 30
+                        low: 30
+                      typeDistribution:
+                        concert: 60
+                        sports: 25
+                        conference: 15
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+        '500':
+          description: Internal server error
+  /tickets/{ticketId}:
+    get:
+      summary: Get ticket details
+      tags:
+        - Tickets
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: The ID of the ticket
+      responses:
+        '200':
+          description: Ticket details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  title:
+                    type: string
+                    example: Concert Night
+                  description:
+                    type: string
+                    example: A musical concert by famous artists
+                  type:
+                    type: string
+                    example: concert
+                  venue:
+                    type: string
+                    example: Madison Square Garden
+                  status:
+                    type: string
+                    example: open
+                  priority:
+                    type: string
+                    example: high
+                  dueDate:
+                    type: string
+                    example: 2024-12-31
+                  createdBy:
+                    type: integer
+                    example: 1
+        '400':
+          description: Ticket not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Ticket not found
+        '500':
+          description: Internal server error
+  
